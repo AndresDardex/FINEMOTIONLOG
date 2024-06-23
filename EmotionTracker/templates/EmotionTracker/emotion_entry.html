@@ -1,0 +1,48 @@
+{% extends 'base_p.html' %}
+<style>
+  .form-control {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      background-color: #f0f0f0; /* Color de fondo gris claro */
+      border: 1px solid #ccc;
+      border-radius: 4px;
+  }
+  .form-control:focus {
+      background-color: #e0e0e0; /* Color de fondo más oscuro al enfocar */
+      border-color: #007bff; /* Color del borde al enfocar */
+  }
+  .form-label {
+      font-weight: bold;
+      margin-bottom: 5px;
+  }
+</style>
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+      <div class="col-md-6">
+          <h1 class="text-primary mb-4">Registro de Emoción</h1>
+          <p><strong>Fecha:</strong> {{ date }}</p>
+          <p><strong>Hora:</strong> {{ time }}</p>
+          <p><strong>Emoción del día anterior:</strong> {{ previous_emotion }}</p>
+          <form method="post">
+              {% csrf_token %}
+              <div class="form-group">
+                  <label class="form-label">{{ form.emotion_level.label_tag }}</label>
+                  {{ form.emotion_level }}
+              </div>
+              <div class="form-group">
+                  <label class="form-label">{{ form.description.label_tag }}</label>
+                  {{ form.description }}
+              </div>
+              <div class="d-grid">
+                  <button type="submit" class="btn btn-secondary btn-lg">Registrar emoción</button>
+              </div>
+          </form>
+          <div class="mt-4">
+              <a href="{% url 'record_emotion' %}" class="btn btn-primary btn-lg">Grabar emoción</a>
+          </div>
+      </div>
+  </div>
+</div>
+{% endblock %}

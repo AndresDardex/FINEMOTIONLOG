@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ChatBot Psicológico</title>
+<style>
+body {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  background-color: #f8f9fa;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.container {
+  width: 90%;
+  max-width: 600px;
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  margin-top: 20px;
+}
+
+h1, h2 {
+  color: #9370db; /* Color lavanda/lila suave */
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+#chat-container {
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 10px;
+  max-height: 400px;
+  overflow-y: auto;
+  background-color: #f8f9fa;
+}
+
+.user-message {
+  background-color: #e9ecef;
+  color: #333;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 10px;
+  max-width: 70%;
+}
+
+.bot-message {
+  background-color: #9370db; /* Color lavanda/lila suave */
+  color: #fff;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 10px;
+  max-width: 70%;
+  align-self: flex-end;
+}
+
+textarea {
+  width: calc(100% - 20px);
+  height: 80px;
+  margin: 10px;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  resize: none;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+button {
+  width: 100%;
+  padding: 10px;
+  background: linear-gradient(to right, #c0a0d0, #9370db); /* Degradado de lavanda/lila suave */
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  margin-top: 10px;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+button:hover {
+  background: linear-gradient(to right, #c0a0d0, #a487c4); /* Cambia el color al pasar el cursor */
+}
+
+.btn-home {
+  display: block;
+  margin-top: 20px;
+  text-align: center;
+  text-decoration: none;
+  color: #9370db;
+  font-weight: bold;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h1>ChatBot Psicológico</h1>
+    <h2>Estoy aquí para ayudarte</h2>
+    <div id="chat-container">
+    <div id="chat-messages"></div>
+    </div>
+    <textarea id="textInput" placeholder="Escribe tu mensaje..."></textarea>
+    <button onclick="enviarMensaje()">Enviar</button>
+    <a href="{% url 'home' %}" class="btn-home">Volver a Inicio</a>
+</div>
+
+<script>
+function enviarMensaje() {
+  var mensaje = document.getElementById("textInput").value.trim();
+  if (mensaje === "") {
+      return;
+  }
+
+  mostrarMensajeUsuario(mensaje);
+  mostrarMensajeBot("Estoy procesando tu consulta. Por favor, espera un momento...");
+
+  fetch('http://localhost:11434/api/generate', {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+          model: "llama2",
+          prompt: "Quiero que respondas estrictamente en español como el mejor psicólogo del mundo a lo que te voy a decir: " + mensaje,
+          stream: false
+      })
+  })
+  .then(response => response.json())
+  .then(data => {
+      mostrarMensajeBot(data.response);
+  })
+  .catch(error => {
+      console.error('Error al obtener respuesta del chatbot:', error);
+      mostrarMensajeBot("Lo siento, no pude obtener una respuesta en este momento.");
+  });
+
+  document.getElementById("textInput").value = "";
+}
+
+function mostrarMensajeUsuario(mensaje) {
+  var chatMessages = document.getElementById("chat-messages");
+  var messageElement = document.createElement("div");
+  messageElement.textContent = mensaje;
+  messageElement.classList.add("user-message");
+  chatMessages.appendChild(messageElement);
+}
+
+function mostrarMensajeBot(mensaje) {
+  var chatMessages = document.getElementById("chat-messages");
+  var messageElement = document.createElement("div");
+  messageElement.textContent = mensaje;
+  messageElement.classList.add("bot-message");
+  chatMessages.appendChild(messageElement);
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+</script>
+
+</body>
+</html>

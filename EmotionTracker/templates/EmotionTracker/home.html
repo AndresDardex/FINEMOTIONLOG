@@ -1,0 +1,23 @@
+{% extends 'base_p.html' %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8 text-center">
+      <h1 class="display-4 text-primary mb-4">Bienvenido a Registro de emociones</h1>
+      <div class="row justify-content-center">
+        <div class="col-md-8">
+          <h2 class="mb-4 text-primary">Opciones</h2>
+          <div class="d-grid gap-3">
+            
+            <a href="{% url 'emotion_entry' %}" class="btn btn-secondary btn-lg">Registrar emociones</a>
+            <a href="{% url 'progress' %}" class="btn btn-secondary btn-lg">Validar tu progreso</a>
+            <a href="{% url 'chatbot' %}" class="btn btn-secondary btn-lg">Hablar con PsicoChat</a>
+            <a href="{% url 'feedback' %}" class="btn btn-secondary btn-lg">Deja tu Feedback</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,66 @@
+{% extends 'base_p.html' %}
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <h1 class="text-primary mb-4">Grabar Emoción</h1>
+            <div>
+                <button id="recordButton" class="btn btn-secondary btn-lg mb-2">Grabar emoción</button>
+            </div>
+            <video id="video" width="400" controls autoplay></video>
+            <p id="transcription" class="mt-3"></p>
+            <form id="transcriptionForm" action="{% url 'home' %}" method="post" style="display: none;">
+                {% csrf_token %}
+                <input type="hidden" name="transcription" id="transcriptionInput">
+                <div class="d-grid mt-3">
+                    <button type="submit" class="btn btn-secondary btn-lg">Enviar y finalizar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    let mediaRecorder;
+    let audioChunks = [];
+    let videoStream;
+
+    document.getElementById('recordButton').addEventListener('click', async () => {
+        if (mediaRecorder && mediaRecorder.state === 'recording') {
+            mediaRecorder.stop();
+            document.getElementById('recordButton').textContent = 'Grabar emoción';
+            videoStream.getTracks().forEach(track => track.stop());
+            document.getElementById('transcriptionForm').style.display = 'block';
+        } else {
+            videoStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
+            mediaRecorder = new MediaRecorder(videoStream);
+            mediaRecorder.start();
+            document.getElementById('recordButton').textContent = 'Detener grabación';
+            document.getElementById('transcriptionForm').style.display = 'none';
+
+            const videoElement = document.getElementById('video');
+            videoElement.srcObject = videoStream;
+
+            mediaRecorder.addEventListener('dataavailable', event => {
+                audioChunks.push(event.data);
+            });
+
+            mediaRecorder.addEventListener('stop', async () => {
+                const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+                audioChunks = [];
+                const formData = new FormData();
+                formData.append('file', audioBlob);
+
+                const response = await fetch('http://localhost:3001/transcribe_audio/', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+                document.getElementById('transcription').textContent = data.transcription;
+                document.getElementById('transcriptionInput').value = data.transcription;
+            });
+        }
+    });
+</script>
+{% endblock %}

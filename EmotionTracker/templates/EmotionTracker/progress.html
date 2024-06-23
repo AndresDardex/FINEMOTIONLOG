@@ -1,0 +1,23 @@
+{% extends 'base_p.html' %}
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8 text-center">
+      <h1 class="display-4 text-primary mb-4">Validar tu progreso</h1>
+      <div class="card shadow-sm mb-4">
+        <div class="card-body">
+          <div class="d-flex justify-content-center">
+            <img src="data:image/png;base64,{{ emotion_chart }}" alt="Gráfica de emociones" class="img-fluid" style="max-width: 600px;">
+          </div>
+        </div>
+      </div>
+      <p class="lead">Usuario: {{ request.user }}</p>
+      <div class="d-grid gap-3 mt-4">
+        <a href="{{ home_url }}" class="btn btn-secondary btn-lg">Volver al Inicio</a>
+        <a href="{{ emotion_entry_url }}" class="btn btn-secondary btn-lg">Registrar Emoción</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+

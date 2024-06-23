@@ -1,0 +1,25 @@
+{% extends 'base_p.html' %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <h2 class="text-center text-primary mb-4">Crear una cuenta</h2>
+            <form method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <div class="mb-3">
+                    <label for="id_user_type" class="form-label">Tipo de usuario</label>
+                    <select name="user_type" id="id_user_type" class="form-select">
+                        <option value="cliente">Cliente</option>
+                        <option value="psicologo">Psicólogo</option>
+                    </select>
+                </div>
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-secondary btn-lg">Registrarse</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
